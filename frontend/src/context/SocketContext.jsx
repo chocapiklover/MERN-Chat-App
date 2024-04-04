@@ -19,7 +19,7 @@ export const SocketContextProvider = ({ children }) => {
 
         //creates new WebSocket connection using io
         if(authUser) {
-            const socket = io('http://localhost:5000',{
+            const socket = io('https://mern-chat-app-ujdb.onrender.com/',{
             // passing the auth userid to the websocket
             query:{
                 userId: authUser._id
