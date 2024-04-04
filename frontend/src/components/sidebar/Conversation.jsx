@@ -1,22 +1,37 @@
 import React from 'react'
+import useConversation from '../../zustand/useConversation';
+import { useSocketContext } from '../../context/SocketContext';
 
-const Conversation = () => {
-  return (<>
-    <div className='flex gap-2 items-center rounded p-2 py-1 cursor-pointer my-1'>
-      <div className="avatar online">
+const Conversation = ({conversation, lastIdx }) => {
+
+  const { selectedConversation , setSelectedConversation } = useConversation();
+
+  const isSelected = selectedConversation?._id === conversation._id; 
+  const { onlineUsers } = useSocketContext();
+  const isOnline = onlineUsers.includes(conversation._id);
+
+  return (
+  <>
+    <div 
+      className={`flex gap-2 items-center hover:bg-pink-300 rounded p-2 py-1 cursor-pointer my-1
+            ${isSelected ? 'bg-pink-300' : ''}`}
+            onClick={() => setSelectedConversation(conversation)}
+            >
+      <div className={` avatar ${isOnline ? 'online' : ''} `}>
         <div className="w-24 rounded-full">
-          <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+          <img src={conversation.profilePicture} />
         </div>
       </div>
 
       <div className="flex flex-col flex-1">
        <div className='flex gap-3 justify-between'>
-          <p className='font-bold'>Username here</p>
+          <p className='font-bold'>{conversation.fullName}</p>
           <span className='text-xl'>$</span>
        </div>
       </div>
 
-      <div className='divider my-0 py-0 h-1'></div>
+      {!lastIdx && <div className='divider my-0 py-0 h-1'></div>}
+      
     </div>
   </>
   );

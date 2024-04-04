@@ -1,6 +1,8 @@
 
 import Conversation from '../models/conversations.models.js'
 import Message from '../models/message.models.js'
+import { io } from '../socket/socket.js';
+import { getReceiverSocketId }  from '../socket/socket.js';
 
 // The sendMessage async function to handle message sending.
 export const sendMessage = async (req, res) => {
@@ -35,10 +37,16 @@ export const sendMessage = async (req, res) => {
             conversation.messages.push(newMessage._id); // adding/pushing new message_id into the array of conversation
         }
 
-        //SOCKET.IO FUNCTIONALITY WILL GO HERE
-        
         // Save both the updated conversation and the new message concurrently/in parallelk
         await Promise.all([conversation.save(), newMessage.save(),])
+
+        //SOCKET.IO FUNCTIONALITY WILL GO HERE
+        //Sending the message to the socket.io user
+        const receiverSocketId = getReceiverSocketId(receiverId);
+		if (receiverSocketId) {
+			// io.to(<socket_id>).emit() used to send events to specific client
+			io.to(receiverSocketId).emit("newMessage", newMessage);
+		}
 
         res.status(201).json(newMessage)
 

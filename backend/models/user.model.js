@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
         type: 'string',
         default: '',
     },
+    contacts: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User' 
+    }],
     //createdat updatedat:
 }, {timestamps: true}
 );
